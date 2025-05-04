@@ -2,9 +2,11 @@
 import argparse
 import sys
 from src.auth import dvwa_login
+from src.discover import crawl_site, guess_pages, enumerate_inputs
+
 
 def do_discover(args):
-    # If custom auth requested, run it first
+    # 1) Authenticate if requested
     browser = None
     if args.custom_auth == "dvwa":
         try:
@@ -13,8 +15,26 @@ def do_discover(args):
             print(f"[ERROR] {e}")
             sys.exit(1)
 
-    # For now we just echo the parameters; later you'll use `browser` for crawling
-    print(f"[discover] target={args.url}, common_words={args.common_words}, custom_auth={args.custom_auth}")
+    # 2) Crawl links
+    print("[*] Crawling site for links…")
+    pages = crawl_site(args.url, browser)
+
+    # 3) Guess hidden pages
+    print("[*] Guessing pages from words list…")
+    pages |= guess_pages(args.url, args.common_words)
+
+    # 4) Enumerate inputs on each page
+    print("[*] Enumerating inputs on each discovered page:")
+    for page in sorted(pages):
+        inputs = enumerate_inputs(page, browser)
+        print(f"\nPage: {page}")
+        if inputs["params"]:
+            print("  • query params:", ", ".join(inputs["params"]))
+        if inputs["forms"]:
+            print("  • form inputs: ", ", ".join(inputs["forms"]))
+        if inputs["cookies"]:
+            print("  • cookies:     ", ", ".join(inputs["cookies"]))
+
 
 def do_test(args):
     # If custom auth requested, run it first
