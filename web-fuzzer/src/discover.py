@@ -23,13 +23,16 @@ def crawl_site(base_url: str, browser=None, max_pages=100) -> set[str]:
         if url in visited:
             continue
         try:
-            resp = browser.open(url)
+            browser.open(url)
         except Exception:
             continue
 
         visited.add(url)
-        # parse out all <a href="...">
-        for tag in resp.soup.select("a[href]"):
+        soup = browser.get_current_page()
+        if soup is None:
+            continue
+
+        for tag in soup.select("a[href]"):
             link = urljoin(url, tag["href"].split('#')[0])
             if same_domain(base_url, link) and link not in visited:
                 queue.append(link)
@@ -48,11 +51,11 @@ def guess_pages(base_url: str, words_file: str, extensions=None) -> set[str]:
         words = [w.strip() for w in f if w.strip()]
     for w in words:
         for ext in extensions:
-            url = urljoin(base_url.rstrip('/') + "/", f"{w}{ext}")
+            u = urljoin(base_url.rstrip('/') + "/", f"{w}{ext}")
             try:
-                r = requests.head(url, allow_redirects=True, timeout=3)
+                r = requests.head(u, allow_redirects=True, timeout=3)
                 if r.status_code == 200:
-                    found.add(url)
+                    found.add(u)
             except requests.RequestException:
                 continue
     return found
@@ -64,23 +67,17 @@ def enumerate_inputs(url: str, browser=None) -> dict:
       - forms: list of <input name="..."> on the page
       - cookies: list of cookie names in browser/session
     """
-    # fetch page
     if browser:
-        resp = browser.open(url)
-        text = resp.soup
+        browser.open(url)
+        text = browser.get_current_page() or BeautifulSoup("", "html.parser")
         cookies = browser.session.cookies
     else:
         r = requests.get(url, timeout=5)
         text = BeautifulSoup(r.text, "html.parser")
         cookies = r.cookies
 
-    # query params
     params = list(parse_qs(urlparse(url).query).keys())
-
-    # form inputs
     forms = [inp["name"] for inp in text.select("input[name]")]
-
-    # cookies
     cookie_names = [c.name for c in cookies]
 
     return {"params": params, "forms": forms, "cookies": cookie_names}
