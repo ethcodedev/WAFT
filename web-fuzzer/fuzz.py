@@ -19,11 +19,17 @@ def do_discover(args):
     print("[*] Crawling site for links…")
     pages = crawl_site(args.url, browser)
 
-    # 3) Guess hidden pages
-    print("[*] Guessing pages from words list…")
-    pages |= guess_pages(args.url, args.common_words)
+    # 3) Prepare extensions list (if any)
+    ext_list = None
+    if args.extensions:
+        with open(args.extensions) as ef:
+            ext_list = [line.strip() for line in ef if line.strip()]
 
-    # 4) Enumerate inputs on each page
+    # 4) Guess hidden pages, passing in ext_list (or let default=['.php',''] kick in)
+    print("[*] Guessing pages from words list…")
+    pages |= guess_pages(args.url, args.common_words, extensions=ext_list)
+
+    # 5) Enumerate inputs
     print("[*] Enumerating inputs on each discovered page:")
     for page in sorted(pages):
         inputs = enumerate_inputs(page, browser)
@@ -57,6 +63,7 @@ def main():
     d = subparsers.add_parser("discover", help="Enumerate inputs")
     d.add_argument("url", help="Target base URL")
     d.add_argument("--common-words", required=True, help="Wordlist for page guessing")
+    d.add_argument("--extensions", default= None, help="Newline‑delimited file of extensions (e.g. .php, .jsp); defaults to .php and '' ")
     d.add_argument("--custom-auth", choices=["dvwa"], help="Run DVWA login/setup flow")
     d.set_defaults(func=do_discover)
 
