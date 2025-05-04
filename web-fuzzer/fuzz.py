@@ -1,11 +1,33 @@
+#!/usr/bin/env python3
 import argparse
 import sys
+from src.auth import dvwa_login
 
 def do_discover(args):
-    print(f"[discover] target={args.url}, common_words={args.common_words}")
+    # If custom auth requested, run it first
+    browser = None
+    if args.custom_auth == "dvwa":
+        try:
+            browser = dvwa_login(args.url)
+        except Exception as e:
+            print(f"[ERROR] {e}")
+            sys.exit(1)
+
+    # For now we just echo the parameters; later you'll use `browser` for crawling
+    print(f"[discover] target={args.url}, common_words={args.common_words}, custom_auth={args.custom_auth}")
 
 def do_test(args):
-    print(f"[test] target={args.url}, vectors={args.vectors}")
+    # If custom auth requested, run it first
+    browser = None
+    if args.custom_auth == "dvwa":
+        try:
+            browser = dvwa_login(args.url)
+        except Exception as e:
+            print(f"[ERROR] {e}")
+            sys.exit(1)
+
+    # Echo for now; later you'll use `browser` for injection & analysis
+    print(f"[test] target={args.url}, vectors={args.vectors}, custom_auth={args.custom_auth}")
 
 def main():
     parser = argparse.ArgumentParser(prog="fuzz", description="Web fuzzer tool")
