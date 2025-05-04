@@ -4,16 +4,21 @@ FInal project for COSI 107a
 ## Basic Setup
 
 ### Clone repo
-
+```bash
 git clone https://github.com/ethcodedev/FuzzerTool.git 
+```
 
 ### Setup venv
+```bash
 1. cd FuzzerTool
 2. python3 -m venv .venv
 3. source .venv/bin/activate 
+```
 
 ### Install dependencies
+```bash
 pip install -r requirements.txt
+```
 
 ## Setup: DVWA via Docker
 
