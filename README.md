@@ -8,9 +8,9 @@ FInal project for COSI 107a
 git clone https://github.com/ethcodedev/FuzzerTool.git 
 
 ### Setup venv
-cd FuzzerTool
-python3 -m venv .venv
-source .venv/bin/activate 
+1. cd FuzzerTool
+2. python3 -m venv .venv
+3. source .venv/bin/activate 
 
 ### Install dependencies
 pip install -r requirements.txt
