@@ -46,7 +46,7 @@ docker run --rm -d -p 80:80 vulnerables/web-dvwa
 
 #### Discover all inputs in DVWA
 ```bash
-python fuzz.py discover http://localhost:8000 \
+python fuzz.py discover http://localhost:80 \
   --common-words=words.txt \
   --extensions=extensions.txt \
   --custom-auth=dvwa
@@ -54,7 +54,7 @@ python fuzz.py discover http://localhost:8000 \
 
 #### Run full vulnerability test against DVWA
 ```bash
-python fuzz.py test http://localhost:8000 \
+python fuzz.py test http://localhost:80 \
   --vectors=vectors.txt \
   --sanitized-chars=badchars.txt \
   --sensitive=sensitive.txt \

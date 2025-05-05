@@ -172,6 +172,20 @@ def do_test(args):
     IGNORE_FIELDS  = {"user_token", "PHPSESSID", "security"}
     seen_findings = set()
 
+    # Plain GET on each URL once to check for leaks and slow responses before injection
+    for raw_page in all_inputs:
+        page = raw_page.rstrip('/')
+        resp, elapsed = fetch(page, browser)
+        for label, line in analyze_and_report(
+                page, resp, elapsed,
+                sanitized, sensitive, slow_ms):
+            if (page, label) in seen_findings:
+                continue
+            seen_findings.add((page, label))
+            print(line)
+
+    # 4) Fuzz each input
+    print("[*] Fuzzing inputs…")
     for raw_page, ins in all_inputs.items():
         # Normalize page URL
         page = raw_page.rstrip('/')
