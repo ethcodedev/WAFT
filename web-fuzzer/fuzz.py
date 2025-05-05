@@ -172,7 +172,9 @@ def do_test(args):
     IGNORE_FIELDS  = {"user_token", "PHPSESSID", "security"}
     seen_findings = set()
 
-    for page, ins in all_inputs.items():
+    for raw_page, ins in all_inputs.items():
+        # Normalize page URL
+        page = raw_page.rstrip('/')
         base = page.split('?')[0]
 
         # — query parameters
