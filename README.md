@@ -40,3 +40,24 @@ docker pull vulnerables/web-dvwa
 #   - `-d` runs in the background
 #   - `-p 80:80` maps container’s port 80 → host’s port 80
 docker run --rm -d -p 80:80 vulnerables/web-dvwa
+```
+
+### 2. Fuzzing DVWA (Damn Vulnerable Web Application)
+
+#### Discover all inputs in DVWA
+```bash
+python fuzz.py discover http://localhost:8000 \
+  --common-words=words.txt \
+  --extensions=extensions.txt \
+  --custom-auth=dvwa
+```
+
+#### Run full vulnerability test against DVWA
+```bash
+python fuzz.py test http://localhost:8000 \
+  --vectors=vectors.txt \
+  --sanitized-chars=badchars.txt \
+  --sensitive=sensitive.txt \
+  --slow=500 \
+  --custom-auth=dvwa
+```
