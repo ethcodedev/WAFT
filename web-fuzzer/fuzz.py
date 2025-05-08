@@ -210,7 +210,7 @@ def do_test(args):
                     seen_findings.add((test_id, label))
 
                     # print only unique findings
-                    print(line + "hey")
+                    print(line)
 
         # — form fields
         for field in ins['forms']:
