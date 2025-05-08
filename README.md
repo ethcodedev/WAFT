@@ -1,4 +1,4 @@
-# FuzzerTool
+# WAFT: A Simple Fuzzer Tool
 FInal project for COSI 107a
 
 ## Basic Setup
