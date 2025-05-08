@@ -144,7 +144,7 @@ def analyze_and_report(test_id, resp, elapsed, sanitized, sensitive, slow_thresh
 
     return findings
 
-# TODO: fill in helper functions
+# TODO: Fill in helper functions
 def do_test(args):
     # 1) Auth if needed
     browser = None
@@ -210,7 +210,7 @@ def do_test(args):
                     seen_findings.add((test_id, label))
 
                     # print only unique findings
-                    print(line)
+                    print(line + "hey")
 
         # — form fields
         for field in ins['forms']:
